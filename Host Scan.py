@@ -58,7 +58,6 @@ def testip():
 
 def portscanner():
     global live_hosts
-    print(live_hosts)
     print('-'*60)
     print('Scanning for open ports')
     print('-'*60)
