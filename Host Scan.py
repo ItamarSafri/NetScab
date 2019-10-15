@@ -7,8 +7,6 @@ import multiprocessing
 
 
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 ip_addr = []
 live_hosts = []
 
@@ -37,9 +35,10 @@ def iplist(start_ip, end_ip):
 
 
 def testip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     global live_hosts
     for ip in ip_addr:
-        t3 = datetime.now()
+        t1 = datetime.now()
         try:
             socket.gethostbyaddr(ip)
             print('Host: ', ip, 'is up   | ',socket.gethostbyaddr(ip)[0])
@@ -55,6 +54,7 @@ def testip():
     total = t2-t1
     print('Scan completed')
     print('Found ', len(live_hosts), ' Live hosts in {}'.format(total))
+    s.close
 
 def portscanner():
     global live_hosts
@@ -68,12 +68,14 @@ def portscanner():
     for ip in live_hosts:
         print('Host: ', socket.gethostbyaddr(ip)[0])
         print('Addr: ', ip)
-        for p in range(1, 1025):
-            res = s.connect_ex((ip, p))
-            if res == 0:
-                print('Port {}:  Open'.format(p))
+        for port in range(1,1025):
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(0.5)
+            result = s.connect_ex((ip, port))
+            if result == 0:
+                print('[+] Port {}:    Open'.format(port))
         print('-'*60)
-        
+    s.close
 
 
 def main():
