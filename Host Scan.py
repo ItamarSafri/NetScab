@@ -9,7 +9,6 @@ import multiprocessing
 
 ip_addr = []
 live_hosts = []
-final = {}
 
 print('-'*60)
 start = input('Type in the fist address: ')
@@ -36,7 +35,6 @@ def iplist(start_ip, end_ip):
 
 
 def testip():
-    print('-'*60)
     print('Scanning')
     print('-'*60)
 
@@ -89,8 +87,6 @@ def portscanner():
             result = s.connect_ex((ip, port))
             if result == 0:
                 print('[+] Port {}:    Open'.format(port))
-                open_ports.append(port)
-        final = {ip : open_ports}
         print('-'*60)
 
     print(final)
