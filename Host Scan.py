@@ -9,6 +9,7 @@ import multiprocessing
 
 ip_addr = []
 live_hosts = []
+final = {}
 
 print('-'*60)
 start = input('Type in the fist address: ')
@@ -35,16 +36,21 @@ def iplist(start_ip, end_ip):
 
 
 def testip():
+    print('-'*60)
+    print('Scanning')
+    print('-'*60)
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     global live_hosts
+    t1 = datetime.now()
+
     for ip in ip_addr:
-        t1 = datetime.now()
         try:
             socket.gethostbyaddr(ip)
-            print('Host: ', ip, 'is up   | ',socket.gethostbyaddr(ip)[0])
+            print('[+] ', ip, 'UP   | ',socket.gethostbyaddr(ip)[0])
             live_hosts.append(ip)
         except socket.herror:
-            print('Host: ', ip, 'is down')
+            continue
 
     t2 = datetime.now()
     
@@ -52,12 +58,22 @@ def testip():
     t2 = t2.replace(microsecond=0)
 
     total = t2-t1
+    print('-'*60)
     print('Scan completed')
     print('Found ', len(live_hosts), ' Live hosts in {}'.format(total))
+    print('-'*60)
+    
     s.close
 
 def portscanner():
     global live_hosts
+    global final
+    open_ports = []
+    
+    p = input('Type in the port range: ')
+    p = p.split('-')
+    p = list(map(int, p))
+
     print('-'*60)
     print('Scanning for open ports')
     print('-'*60)
@@ -67,13 +83,18 @@ def portscanner():
     for ip in live_hosts:
         print('Host: ', socket.gethostbyaddr(ip)[0])
         print('Addr: ', ip)
-        for port in range(1,1025):
+        for port in range(p[0],p[1]):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(0.5)
             result = s.connect_ex((ip, port))
             if result == 0:
                 print('[+] Port {}:    Open'.format(port))
+                open_ports.append(port)
+        final = {ip : open_ports}
         print('-'*60)
+
+    print(final)
+
     s.close
 
 
